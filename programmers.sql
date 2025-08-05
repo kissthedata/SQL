@@ -40,3 +40,39 @@ where status = 'DONE'
 group by writer_id
 having sum(price) >= 700000
 order by TOTAL_SALES
+
+/*
+https://school.programmers.co.kr/learn/courses/30/lessons/59040
+*/
+-- 코드를 입력하세요
+SELECT ANIMAL_TYPE, count(*) as count from animal_ins
+group by animal_type
+order by ANIMAL_TYPE
+
+/*
+https://school.programmers.co.kr/learn/courses/30/lessons/59041
+*/
+-- 코드를 입력하세요
+SELECT NAME, count(*) as COUNT from animal_ins
+where NAME is not null
+group by NAME
+having COUNT >=2
+order by NAME;
+/* is not null : null이 아닌 것들을 필터링한다. */
+
+/*
+https://school.programmers.co.kr/learn/courses/30/lessons/131532
+*/
+-- 코드를 입력하세요
+SELECT year(sales_date) as YEAR, month(sales_date) as MONTH, GENDER, count(distinct u.user_id) as USERS from user_info u
+join online_sale s
+    on u.USER_ID = s.USER_ID
+where u.GENDER is not null
+group by year(sales_date), month(sales_date), gender
+order by year(sales_date), month(sales_date), gender
+/* 실수: 
+유저는 여러개의 상품을 구매할 수 있음. 따라서 distinct를 사용해야 함.
+*/
+
+
+
