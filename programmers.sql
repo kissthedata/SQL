@@ -76,3 +76,47 @@ order by year(sales_date), month(sales_date), gender
 
 
 
+/*
+https://school.programmers.co.kr/learn/courses/30/lessons/276035
+*/
+SELECT DISTINCT D.ID, D.EMAIL, D.FIRST_NAME, D.LAST_NAME
+FROM DEVELOPERS D
+JOIN SKILLCODES S
+  ON D.SKILL_CODE & S.CODE != 0
+WHERE S.CATEGORY = 'Front End'
+ORDER BY D.ID;
+
+/* 오답 */
+/* 비트 연산자를 사용해야하며, join을 사용해야함. 복습 필요 !!
+*/
+
+
+/*
+https://school.programmers.co.kr/learn/courses/30/lessons/284528
+*/
+SELECT 
+  DISTINCT(g.EMP_NO), e.EMP_NAME,
+  CASE
+    WHEN g.SCORE >= 96 THEN 'S'
+    WHEN g.SCORE >= 90 THEN 'A'
+    WHEN g.SCORE >= 80 THEN 'B'
+    ELSE 'C'
+  END AS "GRADE",
+  CASE
+    WHEN SCORE >= 96 THEN e.SAL * 0.2
+    WHEN SCORE >= 90 THEN e.SAL * 0.15
+    WHEN SCORE >= 80 THEN e.SAL * 0.1
+    ELSE 0
+  END AS "BONUS"
+
+FROM (select emp_no, avg(score) as "SCORE" from hr_grade
+    group by emp_no
+) g
+join HR_EMPLOYEES e
+    on g.EMP_NO = e.EMP_NO
+order by EMP_NO;
+
+/* 성과금 연봉 기준이라면 평균 grade로 추출? 음..
+이게 합리적이라고 할 수 있는 건가?
+성과금을 선정할 때, 반기별로 나온 GRADE를 평균으로 추출하는 것이 합리적인가? */
+
