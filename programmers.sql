@@ -106,8 +106,8 @@ SELECT
     WHEN SCORE >= 96 THEN e.SAL * 0.2
     WHEN SCORE >= 90 THEN e.SAL * 0.15
     WHEN SCORE >= 80 THEN e.SAL * 0.1
-    ELSE 0
-  END AS "BONUS"
+    ELS  E 0
+      END AS "BONUS"
 
 FROM (select emp_no, avg(score) as "SCORE" from hr_grade
     group by emp_no
@@ -120,3 +120,31 @@ order by EMP_NO;
 이게 합리적이라고 할 수 있는 건가?
 성과금을 선정할 때, 반기별로 나온 GRADE를 평균으로 추출하는 것이 합리적인가? */
 
+/* 난이도 좀 있네..*/
+/*https://school.programmers.co.kr/learn/courses/30/lessons/151141*/
+with rent as 
+(select history.history_id, history.car_id, c.car_type, c.daily_fee,
+datediff(history.end_date, history.start_date) + 1 as days,
+case
+    when datediff(history.end_date, history.start_date) + 1 >= 90 then '90일 이상'
+    when datediff(history.end_date, history.start_date) + 1 >= 30 then '30일 이상'
+    when datediff(history.end_date, history.start_date) + 1 >= 7 then '7일 이상'
+else '7일 미만' end as duration_type
+from car_rental_company_rental_history history
+join car_rental_company_car c
+    on history.car_id = c.car_id
+where car_type='트럭')
+select r.history_id,
+    floor((1- (ifnull(p.discount_rate,0) / 100)) * r.daily_fee * r.days) as fee
+from rent r
+left join car_rental_company_discount_plan p
+on r.car_type = p.car_type
+and r.duration_type = p.duration_type
+order by fee desc, r.history_id desc;
+
+/* with 절을 사용해서 rent 테이블을 먼저 정의하고,
+그 다음에 rent 테이블을 사용해서 fee를 계산하는 방식으로 작성
+구체적으로, rent 테이블은 car_rental_company_rental_history와 car_rental_company_car 테이블을 조인하여
+차량의 대여 정보를 가져오고, 대여 기간에 따라 duration_type을 분류 */
+
+/* 젇수는 floor로 표시 */
