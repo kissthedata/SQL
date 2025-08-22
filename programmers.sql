@@ -148,3 +148,60 @@ order by fee desc, r.history_id desc;
 차량의 대여 정보를 가져오고, 대여 기간에 따라 duration_type을 분류 */
 
 /* 젇수는 floor로 표시 */
+
+--dwd
+-- https://school.programmers.co.kr/learn/courses/30/lessons/144856
+with temp1 as (SELECT * from book_sales
+where sales_date >= "2022-01-01" and sales_date < "2022-02-01") 
+,
+temp2 as (
+select temp1.book_id, temp1.sales, b.category, b.author_id, b.price from 
+    temp1
+    join book b
+        on temp1.book_id = b.book_id
+)
+
+select a.author_id, author_name, temp2.category, sum(sales * price) as "TOTAL_SALES" from temp2
+join author a
+    on temp2.author_id = a.author_id
+group by a.author_name, temp2.category
+order by   a.author_id ASC, temp2.category DESC;
+
+-- 좀 더 쉽게?
+select author.author_id, author.author_name, book.category, sum(sales*price) as "TOTAL_SALES" from book_sales sales
+join book 
+    on sales.book_id = book.book_id
+join author
+    on author.author_id = book.author_id
+where sales_date >= '2022-01-01' and sales_date < '2022-02-01'
+group by author.author_id, author.author_name, book.category
+order by author_id asc, category desc;
+
+-- join을 두 번 사용해서 book_sales와 book, author 테이블을 연결
+-- 왜 sum(sales) * price가 아닌 sum(sales * price)인지?
+-- sales * price를 먼저 계산한 후에 합산하는 것이 더 정확한 결과를 제공
+-- 반대로, sum(sales) * price는 sales의 합계를 구한 후에 price를 곱하는 방식으로,
+-- 이 경우, price가 고정된 값이 아니라면 잘못된 결과를 초래할 수 있음
+
+
+-- https://school.programmers.co.kr/learn/courses/30/lessons/62284
+-- 코드를 입력하세요
+select cart_id from
+(SELECT cart_id, group_concat(name) as names from cart_products
+group by cart_id
+having names like '%Milk%' and names like '%Yogurt%') t1
+-- group concat 처음 알았음.
+-- 다르게 풀자면
+SELECT
+  cart_id
+FROM cart_products
+GROUP BY cart_id
+having 
+    sum(case
+        when name = "Milk" then 1 else 0 end) > 0
+    and
+    sum(case
+        when name = "Yogurt" then 1 else 0 end) > 0
+order by cart_id
+
+
