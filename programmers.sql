@@ -214,3 +214,33 @@ where GENDER is not null
 group by year(s.sales_date), month(s.sales_date), ui.gender
 order by YEAR, MONTH, GENDER asc;
 
+--https://school.programmers.co.kr/learn/courses/30/lessons/131530
+with cte as (SELECT 
+    product_id,
+    product_code,
+    price,
+    CASE
+        WHEN price >= 0     AND price < 10000 THEN '0'
+        WHEN price >= 10000 AND price < 20000 THEN '10000'
+        WHEN price >= 20000 AND price < 30000 THEN '20000'
+        WHEN price >= 30000 AND price < 40000 THEN '30000'
+        WHEN price >= 40000 AND price < 50000 THEN '40000'
+        WHEN price >= 50000 AND price < 60000 THEN '50000'
+        WHEN price >= 60000 AND price < 70000 THEN '60000'
+        WHEN price >= 70000 AND price < 80000 THEN '70000'
+        WHEN price >= 80000 AND price < 90000 THEN '80000'
+        ELSE '초과'
+    END AS PRICE_GROUP
+FROM product)
+
+select PRICE_GROUP, count(*) as PRODUCTS
+from cte
+group by PRICE_GROUP
+order by PRICE_GROUP asc;
+
+-- 더 쉽게 (floor -> 내림인데, round랑 비슷한 개념이다. 반올림은 round, 내림은 floor)
+-- ceiling은 올림
+select floor(price/10000)*10000 as PRICE_GROUP, count(*)
+from product
+group by PRICE_GROUP
+order by PRICE_GROUP asc;
