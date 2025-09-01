@@ -204,4 +204,13 @@ having
         when name = "Yogurt" then 1 else 0 end) > 0
 order by cart_id
 
+--https://school.programmers.co.kr/learn/courses/30/lessons/131532
+-- 코드를 입력하세요
+SELECT year(s.sales_date) as YEAR, month(s.sales_date) as MONTH, ui.GENDER, count(distinct s.user_id) as USERS
+from online_sale s
+join user_info ui
+    on s.user_id = ui.user_id
+where GENDER is not null
+group by year(s.sales_date), month(s.sales_date), ui.gender
+order by YEAR, MONTH, GENDER asc;
 
