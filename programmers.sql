@@ -244,3 +244,11 @@ select floor(price/10000)*10000 as PRICE_GROUP, count(*)
 from product
 group by PRICE_GROUP
 order by PRICE_GROUP asc;
+
+--window 함수 공부--
+SELECT
+ dept,
+ name,
+ salary
+ RANK() OVER (PARTITION BY dept ORDER BY salary desc) AS dept_rank
+FROM employees;
